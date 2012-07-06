@@ -6,7 +6,7 @@ local XPerl_Player_Events = {}
 local isOutOfControl = nil
 local playerClass, playerName
 local conf, pconf
-XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 634 $")
+XPerl_RequestConfig(function(new) conf = new pconf = conf.player if (XPerl_Player) then XPerl_Player.conf = conf.player end end, "$Revision: 632 $")
 local perc1F = "%.1f"..PERCENT_SYMBOL
 local percD = "%d"..PERCENT_SYMBOL
 
@@ -61,7 +61,7 @@ function XPerl_Player_OnLoad(self)
 	self:SetScript("OnShow", XPerl_Unit_UpdatePortrait)
 	self.time = 0
 
-	--[[self.nameFrame.pvp:SetScript("OnUpdate",
+	self.nameFrame.pvp:SetScript("OnUpdate",
 		function(self, elapsed)
 			if (IsPVPTimerRunning()) then
 				local timeLeft = GetPVPTimer()
@@ -73,7 +73,7 @@ function XPerl_Player_OnLoad(self)
 				end
 			end
 			self.timer:Hide()
-		end)]]--
+		end)
 
 	XPerl_Player_InitDK(self)
 	XPerl_Player_SetupDK(self)
@@ -673,13 +673,13 @@ function XPerl_Player_OnUpdate(self, elapsed)
 		XPerl_Player_CombatFlash(self, elapsed, false)
 	end
 
-	--XPerl_Player_UpdateMana(self)
+	XPerl_Player_UpdateMana(self)
 	
 	-- Attempt to fix "not-updating bug", suggested by Taylla @ Curse
 	-- comment 1st, 2nd and 4th line.
 	-- if (self.updateAFK) then
 	-- 	self.updateAFK = nil
-	--       XPerl_Player_UpdateHealth(self)
+	        XPerl_Player_UpdateHealth(self)
 	-- end	
 
 	if (IsResting() and UnitLevel("player") < 85) then
@@ -761,9 +761,10 @@ function XPerl_Player_Events:PLAYER_ENTERING_WORLD()
 		end
 	end
 
-	local events = {"UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE",
+	local events = {"UNIT_RAGE", "UNIT_MAXRAGE", "UNIT_MAXENERGY", "UNIT_MAXMANA", "UNIT_MAXRUNIC_POWER",
+			"UNIT_HEALTH", "UNIT_MAXHEALTH", "UNIT_LEVEL", "UNIT_DISPLAYPOWER", "UNIT_NAME_UPDATE",
 			"UNIT_SPELLMISS", "UNIT_FACTION", "UNIT_PORTRAIT_UPDATE", "UNIT_FLAGS", "PLAYER_FLAGS_CHANGED",
-			"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "PLAYER_TALENT_UPDATE", "RAID_TARGET_UPDATE", "UPDATE_SHAPESHIFT_FORM",
+			"UNIT_ENTERED_VEHICLE", "UNIT_EXITED_VEHICLE", "PLAYER_TALENT_UPDATE", "MASTERY_UPDATE", "RAID_TARGET_UPDATE", "UPDATE_SHAPESHIFT_FORM",
 			"RUNE_TYPE_UPDATE", "RUNE_POWER_UPDATE"}
 
 
@@ -825,7 +826,7 @@ function XPerl_Player_Events:VARIABLES_LOADED()
 			"PARTY_LOOT_METHOD_CHANGED", "RAID_ROSTER_UPDATE", "PLAYER_UPDATE_RESTING", "PLAYER_REGEN_ENABLED",
 			"PLAYER_REGEN_DISABLED", "PLAYER_ENTER_COMBAT", "PLAYER_LEAVE_COMBAT", "PLAYER_DEAD",
 			"UPDATE_FACTION", "UNIT_AURA", "PLAYER_CONTROL_LOST", "PLAYER_CONTROL_GAINED",
-			"UNIT_COMBAT","UNIT_POWER","UNIT_MAXPOWER"}--, "UNIT_POWER_BAR_SHOW", "UNIT_POWER_BAR_HIDE"
+			"UNIT_COMBAT"}--, "UNIT_POWER_BAR_SHOW", "UNIT_POWER_BAR_HIDE"
 
 	for i,eventE in pairs(events) do
 		self:RegisterEvent(eventE)
@@ -849,22 +850,22 @@ end
 XPerl_Player_Events.UNIT_MAXHEALTH = XPerl_Player_Events.UNIT_HEALTH
 XPerl_Player_Events.PLAYER_DEAD    = XPerl_Player_Events.UNIT_HEALTH
 
--- UNIT_POWER
-function XPerl_Player_Events:UNIT_POWER()
+-- UNIT_MANA
+function XPerl_Player_Events:UNIT_MANA()
 	XPerl_Player_UpdateMana(self)
 end
 
--- UNIT_MAXPOWER
-function XPerl_Player_Events:UNIT_MAXPOWER()
+-- UNIT_MAXMANA
+function XPerl_Player_Events:UNIT_MAXMANA()
 	XPerl_Player_UpdateMana(self)
 end
 
---[[XPerl_Player_Events.UNIT_RAGE			= XPerl_Player_Events.UNIT_MAXMANA
+XPerl_Player_Events.UNIT_RAGE			= XPerl_Player_Events.UNIT_MAXMANA
 XPerl_Player_Events.UNIT_MAXRAGE		= XPerl_Player_Events.UNIT_RAGE
 XPerl_Player_Events.UNIT_RUNIC_POWER	= XPerl_Player_Events.UNIT_MAXMANA
 XPerl_Player_Events.UNIT_MAXRUNIC_POWER	= XPerl_Player_Events.UNIT_RUNIC_POWER
 XPerl_Player_Events.UNIT_ENERGY			= XPerl_Player_Events.UNIT_MAXMANA
-XPerl_Player_Events.UNIT_MAXENERGY		= XPerl_Player_Events.UNIT_ENERGY--]]
+XPerl_Player_Events.UNIT_MAXENERGY		= XPerl_Player_Events.UNIT_ENERGY
 
 -- UNIT_DISPLAYPOWER
 function XPerl_Player_Events:UNIT_DISPLAYPOWER()
@@ -914,6 +915,14 @@ XPerl_Player_Events.UNIT_FLAGS = XPerl_Player_Events.UNIT_FACTION
 
 function XPerl_Player_Events:PLAYER_FLAGS_CHANGED(unit)
 	XPerl_Player_UpdateHealth(self)
+end
+
+-- MASTERY_UPDATE
+function XPerl_Player_Events:MASTERY_UPDATE()
+	XPerl_Player_UpdateMana(self)
+	if (playerClass == "DRUID") then
+		XPerl_Player_DruidBarUpdate(self)
+	end
 end
 
 -- RAID_TARGET_UPDATE
