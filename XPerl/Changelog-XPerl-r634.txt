@@ -1,0 +1,35 @@
+------------------------------------------------------------------------
+r634 | THARAI | 2012-07-05 22:24:12 +0000 (Thu, 05 Jul 2012) | 3 lines
+Changed paths:
+   M /trunk
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_ArcaneBar/XPerl_ArcaneBar.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.xml
+   M /trunk/XPerl_TargetTarget/XPerl_TargetTarget.lua
+
+Remove onupdate from alot of stuff.
+Let inside of raidframe, for it uses onupdate to modify frame based on range to unit
+Still major performance gain, might be some issues, but unlikely.
+------------------------------------------------------------------------
+r633 | THARAI | 2012-07-05 19:08:54 +0000 (Thu, 05 Jul 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl_Player/XPerl_Player.lua
+
+Don't update health & mana on every onupdate, reduces cpu usage by alot.
+------------------------------------------------------------------------
+r632 | mysticalos | 2012-06-01 02:30:30 +0000 (Fri, 01 Jun 2012) | 1 line
+Changed paths:
+   M /trunk/XPerl.lua
+   M /trunk/XPerl_ArcaneBar/XPerl_ArcaneBar.lua
+   M /trunk/XPerl_Globals.lua
+   M /trunk/XPerl_Player/XPerl_Player.lua
+   M /trunk/XPerl_PlayerBuffs/XPerl_PlayerBuffs.lua
+   M /trunk/XPerl_PlayerPet/XPerl_Player_Pet.lua
+   M /trunk/XPerl_RaidFrames/XPerl_Raid.lua
+   M /trunk/XPerl_Target/XPerl_Target.lua
+
+Completely revert 630. Fixes that increase cpu usage of mod by 2953825692784928369874 % are not fixes. Xperl shoudln't use 70% of client cpu in raid combat.
+------------------------------------------------------------------------
