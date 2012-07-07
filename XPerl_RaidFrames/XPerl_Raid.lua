@@ -50,7 +50,7 @@ local XPerl_ColourHealthBar = XPerl_ColourHealthBar
 -- TODO - Watch for:	 ERR_FRIEND_OFFLINE_S = "%s has gone offline."
 
 local conf, rconf
-XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 634 $")
+XPerl_RequestConfig(function(newConf) conf = newConf rconf = conf.raid end, "$Revision: 635 $")
 
 XPERL_RAIDGRP_PREFIX	= "XPerl_Raid_Grp"
 
@@ -1227,12 +1227,10 @@ end
 
 local lastUnit = nil;
 local lastEvent = nil;
-function XPerl_Raid_OnEvent(self, ...)
+function XPerl_Raid_OnEvent(self, event,unit, ...)
 --print(event);
 --print(dump({...}));
 
-event = select(1,...);
-unit = select(2,...);
 
 	local func = XPerl_Raid_Events[event]
 	if (func) then
